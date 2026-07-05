@@ -1,4 +1,4 @@
-name: Deploy API to LWS
+name: Deploy API via FTP
 
 on:
   push:
@@ -12,17 +12,40 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      - name: Deploy via SSH
-        uses: appleboy/ssh-action@v1.2.0
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
         with:
-          host: ${{ secrets.LWS_HOST }}
-          username: ${{ secrets.LWS_USERNAME }}
-          password: ${{ secrets.LWS_PASSWORD }} # Ou SSH Key
-          port: ${{ secrets.LWS_PORT }}
-          script: |
-            cd /home/fidelite
-            git pull origin main
-            composer install --no-dev --optimize-autoloader
-            php artisan migrate --force
-            php artisan config:cache
-            php artisan route:cache
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3
+          coverage: none
+
+      - name: Install Composer Dependencies
+        run: composer install --no-dev --optimize-autoloader
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install NPM Dependencies & Build Assets
+        run: |
+          npm install
+          npm run build
+
+      - name: FTP Deploy
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          port: ${{ secrets.FTP_PORT || 21 }}
+          local-dir: ./
+          server-dir: /fidelite/ # Remplace par le dossier cible sur ton serveur (ex: /public_html/ ou /)
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .env
+            tests/**
+            storage/database.sqlite
+            database/database.sqlite

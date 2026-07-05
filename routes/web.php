@@ -40,6 +40,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/cards/generator', [\App\Http\Controllers\Admin\CardGeneratorController::class, 'index'])->name('admin.cards.generator');
     Route::post('/cards/generate', [\App\Http\Controllers\Admin\CardGeneratorController::class, 'generate'])->name('admin.cards.generate');
     Route::get('/cards/print', [\App\Http\Controllers\Admin\CardGeneratorController::class, 'printView'])->name('admin.cards.print');
+    
+    // Secure route to run migrations via web interface (useful for FTP deployments)
+    Route::get('/deploy/migrate', function () {
+        try {
+            \Illuminate\Support\Facades\Artisan::call('migrate', ['--force' => true]);
+            return response('Les migrations ont été exécutées avec succès !<br><pre>' . \Illuminate\Support\Facades\Artisan::output() . '</pre>');
+        } catch (\Exception $e) {
+            return response('Erreur lors des migrations : ' . $e->getMessage(), 500);
+        }
+    })->name('admin.deploy.migrate');
 });
 
 require __DIR__.'/auth.php';
