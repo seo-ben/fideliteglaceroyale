@@ -21,7 +21,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT || 21 }}
           local-dir: ./
-          server-dir: /home/fidelite/ # Remplace par le dossier cible sur ton serveur (ex: /public_html/ ou /)
+          server-dir: /fidelite/ # Remplace par le dossier cible sur ton serveur (ex: /public_html/ ou /)
           exclude: |
             **/.git*
             **/.git*/**
