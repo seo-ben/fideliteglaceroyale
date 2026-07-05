@@ -12,15 +12,15 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # - name: Setup PHP
-      #   uses: shivammathur/setup-php@v2
-      #   with:
-      #     php-version: '8.3'
-      #     extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3
-      #     coverage: none
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, xml, ctype, iconv, intl, pdo_sqlite, sqlite3
+          coverage: none
 
-      # - name: Install Composer Dependencies
-      #   run: composer install --no-dev --optimize-autoloader
+      - name: Install Composer Dependencies
+        run: composer install --no-dev --optimize-autoloader
 
       - name: Setup Node
         uses: actions/setup-node@v4
@@ -29,7 +29,7 @@ jobs:
 
       - name: Install NPM Dependencies & Build Assets
         run: |
-          npm install
+          npm install --legacy-peer-deps
           npm run build
 
       - name: FTP Deploy
@@ -40,7 +40,7 @@ jobs:
           password: ${{ secrets.FTP_PASSWORD }}
           port: ${{ secrets.FTP_PORT || 21 }}
           local-dir: ./
-          server-dir: /fidelite/ # Remplace par le dossier cible sur ton serveur (ex: /public_html/ ou /)
+          server-dir: /home/fidelite/ # Remplace par le dossier cible sur ton serveur (ex: /public_html/ ou /)
           exclude: |
             **/.git*
             **/.git*/**
