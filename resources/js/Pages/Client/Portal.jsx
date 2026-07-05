@@ -1,0 +1,245 @@
+import React, { useState } from 'react';
+import { Head, Link } from '@inertiajs/react';
+
+export default function Portal({ client, next_level, levels }) {
+    const teal = '#0b838e';
+    const orange = '#eb8b22';
+
+    const [selectedLevel, setSelectedLevel] = useState(null);
+
+    const openModal = (level) => {
+        setSelectedLevel(level);
+    };
+
+    const closeModal = () => {
+        setSelectedLevel(null);
+    };
+
+    return (
+        <div className="min-h-screen bg-[#f4f9f9] font-sans pb-24 overflow-x-hidden relative">
+            <Head title={`Espace Fidélité - ${client.name}`} />
+
+            {/* HEADER COMPACT & PREMIUM */}
+            <div className="fixed top-0 w-full z-40 bg-white/80 backdrop-blur-lg border-b border-white/40 shadow-[0_4px_30px_rgba(0,0,0,0.05)]">
+                <div className="max-w-md mx-auto px-6 py-4 flex justify-between items-center">
+                    <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-full border-[3px] p-0.5 shadow-sm" style={{ borderColor: orange }}>
+                            <div className="w-full h-full rounded-full flex items-center justify-center font-bold text-white text-xl" style={{ backgroundColor: teal }}>
+                                {client.name.charAt(0).toUpperCase()}
+                            </div>
+                        </div>
+                        <div>
+                            <h2 className="font-black text-slate-800 text-lg leading-tight truncate max-w-[150px]">{client.name}</h2>
+                            <p className="text-[10px] font-bold text-teal-700 bg-teal-50 border border-teal-100 inline-block px-2 py-0.5 rounded-full mt-0.5 shadow-sm">
+                                Niveau {client.current_level}
+                            </p>
+                        </div>
+                    </div>
+                    <div className="text-right">
+                        <div className="flex items-end justify-end gap-1">
+                            <span className="text-2xl font-black" style={{ color: teal }}>{client.total_points}</span>
+                            <span className="text-[10px] font-bold text-slate-400 mb-1">pts</span>
+                        </div>
+                        {next_level && (
+                            <p className="text-[9px] font-bold text-orange-500 uppercase">
+                                + {next_level.points_missing} pts pour {next_level.name}
+                            </p>
+                        )}
+                    </div>
+                </div>
+                
+                {/* GLOBAL PROGRESS BAR IN HEADER */}
+                {next_level && (
+                    <div className="h-1.5 w-full bg-slate-100 relative overflow-hidden">
+                        <div 
+                            className="absolute top-0 left-0 h-full transition-all duration-1000 ease-out" 
+                            style={{ 
+                                width: `${next_level.progress}%`,
+                                background: `linear-gradient(90deg, ${teal}, #2fd3e3)`
+                            }}
+                        >
+                            <div className="absolute inset-0 bg-white/30" style={{ backgroundImage: 'linear-gradient(45deg, rgba(255,255,255,0.2) 25%, transparent 25%, transparent 50%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.2) 75%, transparent 75%, transparent)', backgroundSize: '10px 10px' }}></div>
+                        </div>
+                    </div>
+                )}
+            </div>
+
+            {/* ZIG-ZAG MAP (THE GAME) */}
+            <div className="max-w-md mx-auto pt-32 px-4 relative">
+                
+                {/* SVG Connecting Path - Background */}
+                <div className="absolute inset-0 pointer-events-none flex justify-center mt-32">
+                    <svg className="w-full h-full" preserveAspectRatio="none">
+                        <path 
+                            d="M 50% 0 Q 80% 50, 50% 150 T 50% 300 T 50% 450 T 50% 600 T 50% 750 T 50% 900 T 50% 1050" 
+                            fill="none" 
+                            stroke="#e2e8f0" 
+                            strokeWidth="10" 
+                            strokeLinecap="round" 
+                            strokeDasharray="20 20"
+                            className="opacity-60"
+                        />
+                    </svg>
+                </div>
+
+                <div className="relative z-10 flex flex-col gap-24 py-12">
+                    {levels.map((level, index) => {
+                        const isUnlocked = level.is_unlocked;
+                        const isNext = !isUnlocked && next_level && next_level.id === level.id;
+                        
+                        // Zig-Zag logic: Alternating positions
+                        const isLeft = index % 2 === 0;
+                        const alignClass = isLeft ? 'items-start pl-[5%]' : 'items-end pr-[5%]';
+                        const textClass = isLeft ? 'text-left' : 'text-right';
+
+                        return (
+                            <div key={level.id} className={`flex flex-col w-full relative ${alignClass}`}>
+                                
+                                {/* 3D Node (Island) */}
+                                <button 
+                                    onClick={() => openModal(level)}
+                                    className={`relative flex flex-col items-center justify-center transition-transform duration-300 hover:scale-105 group focus:outline-none w-[120px]`}
+                                >
+                                    <div className="relative">
+                                        {/* Glow effect for unlocked */}
+                                        {isUnlocked && (
+                                            <div className="absolute -inset-4 bg-teal-400 rounded-full blur-xl opacity-30 animate-pulse"></div>
+                                        )}
+                                        {/* Glow effect for next level */}
+                                        {isNext && (
+                                            <div className="absolute -inset-4 bg-orange-400 rounded-full blur-xl opacity-20"></div>
+                                        )}
+
+                                        <div 
+                                            className={`w-24 h-24 rounded-full flex items-center justify-center relative z-10 border-[6px] shadow-[0_10px_20px_rgba(0,0,0,0.1)] 
+                                                ${isUnlocked 
+                                                    ? 'bg-gradient-to-br from-teal-400 to-teal-600 border-white text-white' 
+                                                    : isNext
+                                                        ? 'bg-white border-orange-200 text-orange-400'
+                                                        : 'bg-slate-200 border-white text-slate-400'
+                                                }`}
+                                        >
+                                            {/* Inner styling */}
+                                            <div className={`absolute inset-1 rounded-full border-2 border-white/20 ${isUnlocked ? 'bg-white/10' : ''}`}></div>
+                                            
+                                            {isUnlocked ? (
+                                                <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd"></path></svg>
+                                            ) : (
+                                                <svg className="w-10 h-10" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" /></svg>
+                                            )}
+                                        </div>
+                                    </div>
+                                    
+                                    {/* Level Info Plate */}
+                                    <div className="absolute -bottom-6 w-max min-w-[140px] bg-white px-4 py-2 rounded-xl shadow-lg border border-slate-100 text-center z-20">
+                                        <h3 className="font-black text-slate-800 text-sm leading-tight">{level.name}</h3>
+                                        <p className="text-[10px] font-bold text-slate-400 mt-0.5">{level.points_required} pts</p>
+                                    </div>
+
+                                    <div className="absolute -top-3 -right-3 z-30 opacity-0 group-hover:opacity-100 transition-opacity bg-slate-900 text-white text-[9px] font-bold px-2 py-1 rounded-full whitespace-nowrap shadow-md">
+                                        Cliquer pour voir
+                                    </div>
+                                </button>
+                                
+                            </div>
+                        );
+                    })}
+                </div>
+                
+                {/* STARTING POINT DECORATION */}
+                <div className="flex justify-center -mt-8 relative z-0 opacity-40">
+                    <div className="w-4 h-4 bg-slate-300 rounded-full"></div>
+                </div>
+
+            </div>
+
+            <div className="text-center mt-16 relative z-10">
+                <Link href="/" className="text-xs font-bold text-slate-400 hover:text-slate-600 bg-white px-6 py-2 rounded-full shadow-sm border border-slate-100">
+                    Se déconnecter
+                </Link>
+            </div>
+
+            {/* PREMIUM MODAL */}
+            {selectedLevel && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    {/* Backdrop */}
+                    <div 
+                        className="absolute inset-0 bg-slate-900/40 backdrop-blur-md transition-opacity"
+                        onClick={closeModal}
+                    ></div>
+                    
+                    {/* Dialog Container */}
+                    <div className="relative bg-white rounded-[2rem] w-full max-w-sm shadow-[0_20px_60px_-15px_rgba(0,0,0,0.5)] overflow-hidden transform transition-all">
+                        
+                        {/* Header Image/Pattern */}
+                        <div className="h-32 bg-gradient-to-br from-[#0b838e] to-[#096a73] relative overflow-hidden flex items-center justify-center">
+                            <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, white 1px, transparent 0)', backgroundSize: '16px 16px' }}></div>
+                            <h3 className="text-3xl font-black text-white relative z-10 drop-shadow-md" style={{ textShadow: '0 2px 10px rgba(0,0,0,0.2)' }}>
+                                {selectedLevel.name}
+                            </h3>
+                            <button 
+                                onClick={closeModal}
+                                className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/20 text-white hover:bg-white/30 backdrop-blur-sm transition-colors z-20"
+                            >
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+                        
+                        <div className="px-6 py-5 border-b border-slate-100 flex justify-between items-center bg-slate-50">
+                            <span className="text-xs font-bold uppercase text-slate-400">Condition d'accès</span>
+                            <span className="text-sm font-black text-slate-800 bg-white px-3 py-1 rounded-full shadow-sm border border-slate-100">
+                                {selectedLevel.points_required} pts
+                            </span>
+                        </div>
+                        
+                        <div className="p-6 max-h-[50vh] overflow-y-auto">
+                            <h4 className="text-sm font-black text-slate-800 mb-4 flex items-center gap-2">
+                                <svg className="w-4 h-4 text-orange-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                Récompenses incluses
+                            </h4>
+                            
+                            {selectedLevel.rewards.length === 0 ? (
+                                <div className="text-center py-8">
+                                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                        <svg className="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path></svg>
+                                    </div>
+                                    <p className="text-sm font-medium text-slate-400">Récompenses mystères à venir...</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {selectedLevel.rewards.map(reward => (
+                                        <div key={reward.id} className="flex gap-4 p-4 bg-white rounded-2xl border border-slate-100 shadow-[0_2px_10px_rgba(0,0,0,0.02)] group hover:border-teal-100 hover:shadow-md transition-all">
+                                            {reward.image_url ? (
+                                                <div className="w-14 h-14 rounded-xl overflow-hidden shadow-sm shrink-0">
+                                                    <img src={reward.image_url} alt={reward.name} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                                                </div>
+                                            ) : (
+                                                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-teal-50 to-teal-100 text-teal-400 flex items-center justify-center shrink-0 border border-teal-200/50">
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V5.5A2.5 2.5 0 109.5 8H12zm-7 4h14M5 12a2 2 0 110-4h14a2 2 0 110 4M5 12v7a2 2 0 002 2h10a2 2 0 002-2v-7"></path></svg>
+                                                </div>
+                                            )}
+                                            <div>
+                                                <h4 className="font-bold text-slate-800 leading-tight mb-1">{reward.name}</h4>
+                                                <p className="text-[11px] text-slate-500 leading-relaxed font-medium">{reward.description}</p>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+
+                        <div className="p-5 bg-white pt-2">
+                            <button 
+                                onClick={closeModal}
+                                className="w-full py-4 rounded-2xl text-white font-black text-sm uppercase tracking-wider shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-4 focus:ring-teal-500/30"
+                                style={{ background: `linear-gradient(90deg, ${teal}, #0c9ea8)` }}
+                            >
+                                Super !
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+}

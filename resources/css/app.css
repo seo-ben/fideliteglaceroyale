@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Empêche le décalage causé par la Modale (Headless UI) */
+body {
+    padding-right: 0px !important;
+}

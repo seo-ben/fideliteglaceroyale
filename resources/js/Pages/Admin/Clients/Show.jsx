@@ -1,0 +1,389 @@
+import { useState } from 'react';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Head, Link } from '@inertiajs/react';
+
+export default function Show({ client, transactions }) {
+    const card = client.loyalty_card;
+    const [showHistory, setShowHistory] = useState(false);
+
+    // Exact Colors from the Mockup
+    const teal = '#0b838e';
+    const orange = '#eb8b22';
+    const lightTeal = '#e6f2f3';
+
+    return (
+        <AuthenticatedLayout
+            header={
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-4">
+                        <Link href={route('admin.clients.index')} className="p-2 rounded-xl hover:bg-slate-100 text-slate-400 transition-colors">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                        </Link>
+                        <div>
+                            <h1 className="text-2xl font-black text-slate-800 tracking-tight">Détails de la Carte</h1>
+                            <p className="text-sm text-slate-500 font-medium mt-1">Gérez la carte de {client.name || 'Client Anonyme'}</p>
+                        </div>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <Link 
+                            href={route('admin.clients.edit', client.id)}
+                            className="bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 font-bold py-2.5 px-5 rounded-xl shadow-sm transition-all flex items-center gap-2"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                            Modifier
+                        </Link>
+                        <button 
+                            onClick={() => setShowHistory(true)}
+                            className="bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 px-5 rounded-xl shadow-lg transition-all flex items-center gap-2"
+                        >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                            Détails & Historique
+                        </button>
+                    </div>
+                </div>
+            }
+        >
+            <Head title={`Carte - ${client.name || 'Anonyme'}`} />
+
+            {/* Injection de la police cursive pour coller à la maquette */}
+            <style dangerouslySetInnerHTML={{__html: `
+                @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap');
+                @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+                .font-cursive { font-family: 'Dancing Script', cursive; }
+                .font-card { font-family: 'Share Tech Mono', monospace; }
+                
+                .daisy-bg {
+                    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M50 20c-2 0-3-5-3-10s1-10 3-10 3 5 3 10-1 10-3 10zm15 8c-1.5-1.5-1.5-6 0-8 1.5-1.5 6-1.5 8 0 1.5 1.5 1.5 6 0 8-1.5 1.5-6 1.5-8 0zM80 50c0-2 5-3 10-3s10 1 10 3-5 3-10 3-10-1-10-3zm-8 15c1.5-1.5 6-1.5 8 0 1.5 1.5 1.5 6 0 8-1.5 1.5-6 1.5-8 0-1.5-1.5-1.5-6 0-8zM50 80c2 0 3 5 3 10s-1 10-3 10-3-5-3-10 1-10 3-10zm-15-8c1.5 1.5 1.5 6 0 8-1.5 1.5-6 1.5-8 0-1.5-1.5-1.5-6 0-8 1.5-1.5 6-1.5 8 0zM20 50c0 2-5 3-10 3s-10-1-10-3 5-3 10-3 10 1 10 3zm8-15c-1.5 1.5-6 1.5-8 0-1.5-1.5-1.5-6 0-8 1.5-1.5 6-1.5 8 0 1.5 1.5 1.5 6 0 8zM50 55a5 5 0 1 0 0-10 5 5 0 0 0 0 10z'/%3E%3C/g%3E%3C/svg%3E");
+                }
+                .daisy-bg-dark {
+                    background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%230b838e' fill-opacity='0.03'%3E%3Cpath d='M50 20c-2 0-3-5-3-10s1-10 3-10 3 5 3 10-1 10-3 10zm15 8c-1.5-1.5-1.5-6 0-8 1.5-1.5 6-1.5 8 0 1.5 1.5 1.5 6 0 8-1.5 1.5-6 1.5-8 0zM80 50c0-2 5-3 10-3s10 1 10 3-5 3-10 3-10-1-10-3zm-8 15c1.5-1.5 6-1.5 8 0 1.5 1.5 1.5 6 0 8-1.5 1.5-6 1.5-8 0-1.5-1.5-1.5-6 0-8zM50 80c2 0 3 5 3 10s-1 10-3 10-3-5-3-10 1-10 3-10zm-15-8c1.5 1.5 1.5 6 0 8-1.5 1.5-6 1.5-8 0-1.5-1.5-1.5-6 0-8 1.5-1.5 6-1.5 8 0zM20 50c0 2-5 3-10 3s-10-1-10-3 5-3 10-3 10 1 10 3zm8-15c-1.5 1.5-6 1.5-8 0-1.5-1.5-1.5-6 0-8 1.5-1.5 6-1.5 8 0 1.5 1.5 1.5 6 0 8zM50 55a5 5 0 1 0 0-10 5 5 0 0 0 0 10z'/%3E%3C/g%3E%3C/svg%3E");
+                }
+            `}} />
+
+            <div className="mt-8 flex flex-col items-center gap-10 pb-12">
+                
+                {!card ? (
+                    <div className="bg-orange-50 border border-orange-100 rounded-2xl p-6 text-center max-w-lg w-full">
+                        <p className="text-orange-600 font-bold mb-2">Aucune carte assignée</p>
+                        <p className="text-sm text-orange-500/80 mb-4">Ce client n'a pas encore de carte de fidélité.</p>
+                        <Link href={route('admin.clients.edit', client.id)} className="inline-flex items-center gap-2 px-5 py-2.5 bg-orange-600 hover:bg-orange-700 text-white rounded-xl font-bold text-sm shadow-md shadow-orange-500/20 transition-all hover:-translate-y-0.5">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm14 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z"></path></svg>
+                            Assigner une carte
+                        </Link>
+                    </div>
+                ) : (
+                    <>
+                        {/* ==================== RECTO DE LA CARTE ==================== */}
+                        <div className="relative w-[550px] h-[348px] bg-[#f9fdfd] rounded-[1.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] overflow-hidden flex border border-gray-200 transition-transform hover:scale-[1.02] duration-300">
+                            
+                            {/* SVG Background Layer */}
+                            <svg className="absolute inset-0 w-full h-full z-0 pointer-events-none" viewBox="0 0 550 348" preserveAspectRatio="none">
+                                <defs>
+                                    {/* Pattern filigrane pour la zone Teal */}
+                                    <pattern id="fidelPattern" x="0" y="0" width="80" height="80" patternUnits="userSpaceOnUse" patternTransform="rotate(15)">
+                                        <g stroke="#ffffff" fill="none" strokeWidth="1.5" opacity="0.04">
+                                            <path d="M10,20 L10,35 L25,35 L25,20 Z" />
+                                            <path d="M13,20 C13,10 22,10 22,20" />
+                                            <path d="M50,15 L53,22 L60,22 L55,27 L57,34 L50,30 L43,34 L45,27 L40,22 L47,22 Z" />
+                                            <rect x="25" y="55" width="15" height="15" />
+                                            <path d="M32.5,55 L32.5,70 M25,62.5 L40,62.5" />
+                                        </g>
+                                    </pattern>
+                                </defs>
+                                
+                                {/* Teal Area */}
+                                <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill={teal} />
+                                <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill="url(#fidelPattern)" />
+                                
+                                {/* Orange Line */}
+                                <path d="M388,0 C268,120 248,220 298,348" fill="none" stroke={orange} strokeWidth="3" />
+                                
+                                {/* Leaf Decoration Bottom Right */}
+                                <g stroke="#a8d0d6" fill="none" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" opacity="0.6" transform="translate(420, 260) scale(0.9)">
+                                    <path d="M50,120 Q0,80 -50,0" />
+                                    <path d="M-50,0 C-70,-10 -60,20 -40,10" fill="#f9fdfd"/>
+                                    <path d="M-30,20 C-50,10 -40,40 -20,30" fill="#f9fdfd"/>
+                                    <path d="M-10,40 C-30,30 -20,60 0,50" fill="#f9fdfd"/>
+                                    <path d="M10,60 C-10,50 0,80 20,70" fill="#f9fdfd"/>
+                                    <path d="M30,80 C10,70 20,100 40,90" fill="#f9fdfd"/>
+                                    <path d="M-40,10 C-30,-10 -10,-10 -20,10" fill="#f9fdfd"/>
+                                    <path d="M-20,30 C-10,10 10,10 0,30" fill="#f9fdfd"/>
+                                    <path d="M0,50 C10,30 30,30 20,50" fill="#f9fdfd"/>
+                                    <path d="M20,70 C30,50 50,50 40,70" fill="#f9fdfd"/>
+                                </g>
+                            </svg>
+
+                            {/* LEFT CONTENT (TEAL) */}
+                            <div className="absolute left-0 top-0 bottom-0 w-[55%] z-20 flex flex-col items-center text-white pt-8 pb-10 px-8">
+                                {/* Logo */}
+                                <img src="/assets/images/logoci.png" alt="Logo" className="h-[130px] object-contain filter drop-shadow-lg mb-4" />
+                                
+                                {/* Text */}
+                                <div className="text-center w-full">
+                                    <h2 className="text-[15px] font-bold leading-tight tracking-widest mb-1.5">VOTRE FIDÉLITÉ</h2>
+                                    <div className="flex items-center justify-center gap-2 mb-6">
+                                        <svg className="w-2.5 h-2.5" style={{ color: orange }} fill="currentColor" viewBox="0 0 24 24" transform="rotate(-15)"><path d="M12 2L14 9L21 12L14 15L12 22L10 15L3 12L10 9L12 2Z"/></svg>
+                                        <h2 className="text-[16px] font-extrabold leading-tight tracking-wide" style={{ color: orange }}>RÉCOMPENSÉE !</h2>
+                                        <svg className="w-2.5 h-2.5" style={{ color: orange }} fill="currentColor" viewBox="0 0 24 24" transform="rotate(15)"><path d="M12 2L14 9L21 12L14 15L12 22L10 15L3 12L10 9L12 2Z"/></svg>
+                                    </div>
+                                    
+                                    <svg className="w-3.5 h-3.5 mx-auto" style={{ color: orange }} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path></svg>
+                                </div>
+
+                                {/* 3 Icons */}
+                                <div className="flex justify-between items-end w-[85%] mt-auto pb-2">
+                                    <div className="flex flex-col items-center">
+                                        <svg className="w-6 h-6 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"></path></svg>
+                                        <span className="text-[6.5px] font-extrabold tracking-[0.1em]">ACHETEZ</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <svg className="w-6 h-6 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                                        <span className="text-[6.5px] font-extrabold tracking-[0.1em] leading-tight text-center">CUMULEZ<br/>DES POINTS</span>
+                                    </div>
+                                    <div className="flex flex-col items-center">
+                                        <svg className="w-6 h-6 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 7v14M8 7H4M20 7h-4"></path></svg>
+                                        <span className="text-[6.5px] font-extrabold tracking-[0.1em] leading-tight text-center">RECEVEZ<br/>DES CADEAUX</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* RIGHT CONTENT (WHITE) */}
+                            <div className="absolute right-0 top-0 bottom-0 w-[45%] z-20 flex flex-col justify-center items-center">
+                                {/* QR Code */}
+                                <div className="absolute top-5 right-5 flex flex-col items-center">
+                                    <div className="p-1 border-[1.5px] rounded-[0.4rem] bg-white" style={{ borderColor: teal }}>
+                                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${import.meta.env.VITE_PORTAL_URL || window.location.origin}/c/${card.qr_token}&color=000000`} alt="QR Code" className="w-[70px] h-[70px]" />
+                                    </div>
+                                    <div className="text-center mt-1.5 w-[85px]">
+                                        <p className="text-[6.5px] font-black tracking-widest leading-[1.3]" style={{ color: teal }}>SCANNEZ &<br/>DÉCOUVREZ<br/>VOS POINTS !</p>
+                                    </div>
+                                </div>
+
+                                {/* Center Text */}
+                                <div className="absolute top-[140px] text-center w-full px-4 z-10 pl-6">
+                                    <h2 className="text-[17px] font-extrabold tracking-[0.15em]" style={{ color: teal }}>CARTE DE FIDÉLITÉ</h2>
+                                    <p className="text-[8.5px] font-semibold mt-1 text-slate-500 tracking-wide">Plus vous achetez, plus vous gagnez !</p>
+                                    
+                                    <div className="flex items-center justify-center gap-3 mt-4 mb-6">
+                                        <div className="h-[1.5px] w-6 bg-orange-400"></div>
+                                        <svg className="w-3.5 h-3.5" style={{ color: orange }} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path></svg>
+                                        <div className="h-[1.5px] w-6 bg-orange-400"></div>
+                                    </div>
+                                    
+                                    {/* Number Badge */}
+                                    <div>
+                                        <p className="text-[8px] font-extrabold uppercase tracking-widest mb-1.5" style={{ color: teal }}>Numéro Unique</p>
+                                        <div className="inline-block font-card font-bold tracking-[0.25em] text-[17px] mt-1" style={{ color: teal, textShadow: '1px 1px 1px rgba(0,0,0,0.15), -1px -1px 1px rgba(255,255,255,0.8)' }}>
+                                            {card.card_number.replace(/(\d{5})(\d{5})/, '$1 $2')}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* ==================== VERSO DE LA CARTE ==================== */}
+                        <div className="relative w-[550px] h-[348px] bg-white rounded-[1.5rem] shadow-[0_20px_50px_-12px_rgba(0,0,0,0.3)] overflow-hidden flex border border-gray-200 transition-transform hover:scale-[1.02] duration-300">
+                            
+                            {/* Footer Background (z-0) - Rendered behind SVG */}
+                            <div className="absolute bottom-0 right-0 w-[60%] h-[40px] z-0 rounded-br-[1.5rem]" style={{ backgroundColor: lightTeal }}></div>
+
+                            {/* SVG Background Layer (z-10 to clip the footer background) */}
+                            <svg className="absolute inset-0 w-full h-full z-10 pointer-events-none" viewBox="0 0 550 348" preserveAspectRatio="none">
+                                {/* Orange band (follows teal curve closely all the way down) */}
+                                <path d="M0,0 L290,0 C210,120 210,228 290,348 L0,348 Z" fill={orange} />
+                                {/* Teal Area (Concave curve pushing left) */}
+                                <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill={teal} />
+                                {/* Watermark matched to teal */}
+                                <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill="url(#fidelPattern)" />
+                                
+                                {/* Flower / Leaves Decoration Bottom Left */}
+                                <g transform="translate(30, 315) scale(1.1)" opacity="0.95">
+                                    <path d="M8,2 C25,-10 40,5 25,20 C15,30 0,40 5,20" fill="#f9fdfd" opacity="0.9"/>
+                                    <path d="M0,10 C15,-5 30,15 15,30 C5,40 -10,50 -5,30" fill="#f9fdfd" opacity="0.9" transform="rotate(40)"/>
+                                    <circle cx="0" cy="0" r="14" fill="#ffffff" />
+                                    <circle cx="0" cy="0" r="5" fill={orange} />
+                                </g>
+                            </svg>
+
+                            {/* LEFT CONTENT (TEAL) */}
+                            <div className="absolute left-0 top-0 bottom-0 w-[35%] z-20 flex flex-col items-center py-8 px-4 text-white text-center">
+                                <img src="/assets/images/logoci.png" alt="Logo" className="h-[100px] w-full max-w-[140px] object-contain filter drop-shadow-md mb-4" />
+                                
+                                <h3 className="text-[22px] font-cursive leading-tight tracking-wide mb-4">Merci pour<br/>votre fidélité !</h3>
+                                
+                                <svg className="w-3.5 h-3.5 mb-10" style={{ color: orange }} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path></svg>
+                                
+                                <p className="text-[8px] leading-[1.5] font-bold tracking-wide mt-auto">
+                                    Cette carte est personnelle,<br/>
+                                    non acessible et reste la propriété<br/>
+                                    de Ci Gusta! Reggio Emilia.
+                                </p>
+                            </div>
+
+                            {/* RIGHT CONTENT (WHITE) */}
+                            <div className="absolute right-0 top-0 bottom-0 w-[60%] z-20 flex flex-col pt-8">
+                                
+                                {/* Comment ça marche */}
+                                <div className="flex items-center justify-center gap-3 mb-6 pr-6 pl-4">
+                                    <div className="flex flex-col gap-[2.5px] items-end opacity-80">
+                                        <div className="w-2.5 h-[1.5px] rounded-full rotate-[15deg]" style={{ backgroundColor: orange }}></div>
+                                        <div className="w-3.5 h-[1.5px] rounded-full" style={{ backgroundColor: orange }}></div>
+                                        <div className="w-2.5 h-[1.5px] rounded-full -rotate-[15deg]" style={{ backgroundColor: orange }}></div>
+                                    </div>
+                                    <h3 className="text-[11.5px] font-black tracking-[0.08em]" style={{ color: teal }}>COMMENT ÇA MARCHE ?</h3>
+                                    <div className="flex flex-col gap-[2.5px] items-start opacity-80">
+                                        <div className="w-2.5 h-[1.5px] rounded-full -rotate-[15deg]" style={{ backgroundColor: orange }}></div>
+                                        <div className="w-3.5 h-[1.5px] rounded-full" style={{ backgroundColor: orange }}></div>
+                                        <div className="w-2.5 h-[1.5px] rounded-full rotate-[15deg]" style={{ backgroundColor: orange }}></div>
+                                    </div>
+                                </div>
+
+                                {/* Steps */}
+                                <div className="flex justify-center items-center gap-4 mb-6 pr-6 pl-4">
+                                    {/* Step 1 */}
+                                    <div className="flex flex-col items-center text-center">
+                                        <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2" style={{ backgroundColor: '#edf6f7', color: teal }}>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
+                                        </div>
+                                        <p className="text-[6.5px] font-extrabold leading-tight tracking-wider" style={{ color: teal }}>PRÉSENTEZ<br/>VOTRE CARTE</p>
+                                    </div>
+                                    
+                                    <svg className="w-3 h-3 text-slate-300 -mt-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                                    
+                                    {/* Step 2 */}
+                                    <div className="flex flex-col items-center text-center">
+                                        <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2" style={{ backgroundColor: '#edf6f7', color: teal }}>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"></path></svg>
+                                        </div>
+                                        <p className="text-[6.5px] font-extrabold leading-tight tracking-wider" style={{ color: teal }}>CUMULEZ<br/>DES POINTS</p>
+                                    </div>
+
+                                    <svg className="w-3 h-3 text-slate-300 -mt-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+
+                                    {/* Step 3 */}
+                                    <div className="flex flex-col items-center text-center">
+                                        <div className="w-11 h-11 rounded-full flex items-center justify-center mb-2" style={{ backgroundColor: '#edf6f7', color: teal }}>
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"></path><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M12 7v14M8 7H4M20 7h-4"></path></svg>
+                                        </div>
+                                        <p className="text-[6.5px] font-extrabold leading-tight tracking-wider" style={{ color: teal }}>OBTENEZ<br/>VOS RÉCOMPENSES</p>
+                                    </div>
+                                </div>
+
+                                {/* Dashed Divider */}
+                                <div className="w-[60%] border-t-[1.5px] border-dashed border-teal-200/60 mb-4 ml-6"></div>
+
+                                {/* Lower section with Button and Phone */}
+                                <div className="flex-1 relative w-full pl-4 pr-6 flex items-center justify-between pb-4">
+                                    
+                                    {/* Button Left */}
+                                    <div className="w-[50%]">
+                                        <h4 className="text-[9.5px] font-black mb-1.5 tracking-wide" style={{ color: teal }}>CONSULTEZ VOS POINTS</h4>
+                                        <p className="text-[7px] text-slate-600 mb-3 font-semibold tracking-wide">Scannez le QR Code ou rendez-vous sur</p>
+                                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white text-[8px] font-bold shadow-md w-max" style={{ backgroundColor: teal }}>
+                                            <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
+                                            {import.meta.env.VITE_PORTAL_URL ? import.meta.env.VITE_PORTAL_URL.replace(/^https?:\/\//, '') : window.location.host}
+                                        </div>
+                                    </div>
+
+                                    {/* iPhone Mockup Right */}
+                                    <div className="w-[85px] h-[160px] bg-white border-[3px] border-slate-800 rounded-[1.2rem] shadow-[0_15px_25px_-5px_rgba(0,0,0,0.3)] overflow-hidden flex flex-col items-center pt-3 z-10 mr-2 -mt-6 rotate-[5deg] hover:rotate-0 transition-transform duration-300">
+                                        <div className="w-6 h-[2px] bg-slate-800 rounded-full mb-2"></div>
+                                        <img src="/assets/images/logoci.png" alt="Logo" className="w-10 mb-1.5 object-contain" />
+                                        <p className="text-[5px] font-extrabold text-gray-500 mb-1.5">Bonjour !</p>
+                                        <div className="w-[85%] h-12 bg-[#f4f8f9] rounded-lg border border-gray-100 flex flex-col items-center justify-center shadow-sm">
+                                            <p className="text-[4px] text-gray-400 font-bold uppercase tracking-wide">Vos points actuels</p>
+                                            <p className="text-[12px] font-black mt-0.5" style={{ color: teal }}>★★★★</p>
+                                        </div>
+                                        <p className="text-[4.5px] text-gray-400 mt-2 text-center leading-tight font-medium">Prochaine récompense<br/>dans ★★★ points</p>
+                                        <svg className="w-6 h-6 mt-auto mb-2 opacity-10" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M5 5a3 3 0 015-2.236A3 3 0 0114.83 6H16a2 2 0 110 4h-5V9a1 1 0 10-2 0v1H4a2 2 0 110-4h1.17C5.06 5.687 5 5.35 5 5zm4 1V5a1 1 0 10-1 1h1zm3 0a1 1 0 10-1-1v1h1z" clipRule="evenodd"></path><path d="M9 11H3v5a2 2 0 002 2h4v-7zM11 18h4a2 2 0 002-2v-5h-6v7z"></path></svg>
+                                    </div>
+                                </div>
+
+                                {/* Footer Content (z-20) - Background removed so SVG clips it */}
+                                <div className="absolute bottom-0 right-0 w-full h-[40px] flex items-center px-6 z-20 pointer-events-none" style={{ color: teal }}>
+                                    <div className="flex-1 flex justify-between items-center pr-[10px] pl-[55px] pointer-events-auto">
+                                        <div className="flex items-center gap-1.5 text-[6.5px] font-extrabold tracking-widest leading-tight">
+                                            <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            SÉCURISÉE • UNIQUE •<br/>PERSONNELLE
+                                        </div>
+                                        <div className="flex items-center gap-1.5 pl-2">
+                                            <span className="text-[11px] font-cursive tracking-wide">Votre fidélité, notre plus belle récompense.</span>
+                                            <svg className="w-3 h-3" style={{ color: orange }} fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd"></path></svg>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                )}
+
+            </div>
+
+            {/* Modal Historique des points */}
+            {showHistory && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                    <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowHistory(false)}></div>
+                    <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden animate-in fade-in zoom-in duration-200">
+                        
+                        <div className="flex items-center justify-between p-6 border-b border-slate-100 bg-slate-50">
+                            <div>
+                                <h3 className="text-xl font-bold text-slate-800">Historique des points</h3>
+                                <p className="text-sm text-slate-500">Traçabilité complète pour la carte {card?.card_number}</p>
+                            </div>
+                            <button onClick={() => setShowHistory(false)} className="p-2 bg-white rounded-full text-slate-400 hover:text-red-500 hover:bg-red-50 transition-colors shadow-sm border border-slate-200">
+                                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                            </button>
+                        </div>
+
+                        <div className="p-6 overflow-y-auto flex-1">
+                            <div className="mb-6 flex justify-between bg-slate-800 text-white p-4 rounded-xl shadow-inner">
+                                <div>
+                                    <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">Total actuel</p>
+                                    <p className="text-3xl font-black">{client.total_points} pts</p>
+                                </div>
+                                <div className="text-right">
+                                    <p className="text-xs text-slate-400 uppercase tracking-widest font-bold">Niveau</p>
+                                    <p className="text-xl font-bold text-orange-400">{client.current_level?.name || 'Aucun'}</p>
+                                </div>
+                            </div>
+
+                            {transactions.length === 0 ? (
+                                <div className="py-12 text-center">
+                                    <div className="w-16 h-16 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-4">
+                                        <svg className="w-8 h-8 text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                    </div>
+                                    <p className="text-slate-500 font-medium">Aucune transaction pour le moment.</p>
+                                </div>
+                            ) : (
+                                <div className="space-y-4">
+                                    {transactions.map((tx) => (
+                                        <div key={tx.id} className="flex items-center gap-4 bg-white border border-slate-100 p-4 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+                                            <div className={`w-12 h-12 rounded-full flex items-center justify-center shrink-0 ${tx.type === 'credit' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'}`}>
+                                                {tx.type === 'credit' ? (
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4"></path></svg>
+                                                ) : (
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4"></path></svg>
+                                                )}
+                                            </div>
+                                            <div className="flex-1">
+                                                <p className="font-bold text-slate-800">{tx.note}</p>
+                                                <p className="text-xs text-slate-400 font-medium mt-0.5">
+                                                    {new Date(tx.created_at).toLocaleDateString()} à {new Date(tx.created_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                                                    {tx.order_id && ` • Commande #${tx.order_id}`}
+                                                </p>
+                                            </div>
+                                            <div className={`text-xl font-black ${tx.type === 'credit' ? 'text-green-500' : 'text-red-500'}`}>
+                                                {tx.type === 'credit' ? '+' : '-'}{tx.points}
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+        </AuthenticatedLayout>
+    );
+}
