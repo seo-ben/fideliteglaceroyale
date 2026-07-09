@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Client;
 use App\Models\Level;
 use App\Models\LoyaltyCard;
+use App\Models\Reward;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 
@@ -15,48 +16,96 @@ class DemoFideliteSeeder extends Seeder
      */
     public function run(): void
     {
-        // 1. Create a Level
-        $bronze = Level::firstOrCreate([
-            'name' => 'Bronze',
-        ], [
-            'points_required' => 0,
-            'reward_description' => 'Niveau de base',
-        ]);
+        // 1. Créer ou mettre à jour les niveaux de fidélité avec leurs récompenses
+        $levels = [
+            [
+                'name' => 'Découverte',
+                'points_required' => 0,
+                'rewards' => []
+            ],
+            [
+                'name' => 'Glace',
+                'points_required' => 40,
+                'rewards' => [
+                    ['name' => '1 Boule de Glace', 'description' => '1 boule de glace offerte au choix']
+                ]
+            ],
+            [
+                'name' => 'Gourmand',
+                'points_required' => 80,
+                'rewards' => [
+                    ['name' => '2 Boules ou Pâtisserie', 'description' => '2 boules de glace OU une pâtisserie individuelle']
+                ]
+            ],
+            [
+                'name' => 'Premium',
+                'points_required' => 120,
+                'rewards' => [
+                    ['name' => 'Coupe Glacée ou Dessert Premium', 'description' => 'Une coupe glacée OU un dessert premium']
+                ]
+            ],
+            [
+                'name' => 'Gourmet',
+                'points_required' => 180,
+                'rewards' => [
+                    ['name' => 'Pizza Classique', 'description' => 'Une pizza classique offerte']
+                ]
+            ],
+            [
+                'name' => 'V.I.P.',
+                'points_required' => 250,
+                'rewards' => [
+                    ['name' => 'Bon d\'achat ou Gâteau', 'description' => 'Un bon d\'achat de 15 000 FCFA OU un gâteau d\'anniversaire (selon la marge)']
+                ]
+            ]
+        ];
 
-        $silver = Level::firstOrCreate([
-            'name' => 'Silver',
-        ], [
-            'points_required' => 50,
-            'reward_description' => '1 boisson offerte au choix',
-        ]);
+        foreach ($levels as $levelData) {
+            // Créer ou mettre à jour le niveau
+            $level = Level::updateOrCreate(
+                ['name' => $levelData['name']],
+                [
+                    'points_required' => $levelData['points_required'],
+                    'reward_description' => count($levelData['rewards']) > 0 
+                        ? $levelData['rewards'][0]['description'] 
+                        : 'Niveau de départ'
+                ]
+            );
 
-        $gold = Level::firstOrCreate([
-            'name' => 'Gold',
-        ], [
-            'points_required' => 200,
-            'reward_description' => '10% de réduction sur toutes les commandes',
-        ]);
+            // Créer ou mettre à jour les récompenses associées
+            foreach ($levelData['rewards'] as $rewardData) {
+                Reward::updateOrCreate(
+                    ['level_id' => $level->id, 'name' => $rewardData['name']],
+                    [
+                        'description' => $rewardData['description'],
+                        'is_active' => true
+                    ]
+                );
+            }
+        }
 
-        // 2. Create a Client
-        $client = Client::firstOrCreate([
-            'email' => 'client@test.com',
-        ], [
-            'name' => 'Jean ',
-            'phone' => '00000000',
-            'total_points' => 35,
-            'current_level_id' => $bronze->id,
-        ]);
-
-        // 3. Create a Card
-        $card = LoyaltyCard::firstOrCreate([
-            'client_id' => $client->id,
-        ], [
-            'card_number' => 'LF-12345',
-            'qr_token' => 'TOKEN_TEST_123',
-        ]);
+        // 2. Créer ou mettre à jour le client de démonstration
+        $starterLevel = Level::where('points_required', 0)->first();
         
-        // 4. Create Rewards for Levels
-        $silver->rewards()->firstOrCreate(['name' => 'Boisson Gratuite'], ['description' => 'Une boisson offerte de votre choix']);
-        $gold->rewards()->firstOrCreate(['name' => 'Réduction 10%'], ['description' => '10% sur toute la carte']);
+        $client = Client::updateOrCreate(
+            ['email' => 'client@test.com'],
+            [
+                'name' => 'Jean Dupont',
+                'phone' => '0600000000',
+                'total_points' => 35,
+                'current_level_id' => $starterLevel ? $starterLevel->id : null
+            ]
+        );
+
+        // 3. Créer ou mettre à jour la carte de fidélité
+        if ($client) {
+            LoyaltyCard::updateOrCreate(
+                ['client_id' => $client->id],
+                [
+                    'card_number' => 'SF-' . strtoupper(Str::random(8)),
+                    'qr_token' => Str::random(32)
+                ]
+            );
+        }
     }
 }

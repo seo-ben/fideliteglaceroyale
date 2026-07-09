@@ -17,13 +17,14 @@ class DatabaseSeeder extends Seeder
     {
         User::factory()->create([
             'name' => 'Administrateur',
-            'email' => 'admin@smartflow.com',
-            'password' => bcrypt('password123'),
+            'email' => 'smartflowpos@gmail.com',
+            'password' => bcrypt('Smartflow@7026!!'),
             'is_admin' => true,
         ]);
 
         $this->call([
             PointRuleSeeder::class,
+            DemoFideliteSeeder::class,
         ]);
     }
 
