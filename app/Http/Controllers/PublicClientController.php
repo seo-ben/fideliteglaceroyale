@@ -42,13 +42,13 @@ class PublicClientController extends Controller
             ->first();
 
         if (!$card) {
-            abort(404, 'Carte de fidélité non trouvée.');
+            return redirect('/')->withErrors(['card_number' => 'Ce QR Code ne correspond à aucune carte valide.']);
         }
 
         $client = $card->client;
         
         if (!$client) {
-            abort(404, 'Client non trouvé.');
+            return redirect('/')->withErrors(['card_number' => 'Cette carte n\'est pas encore assignée à un client.']);
         }
 
         // Fetch all levels sorted by required points to calculate next level
