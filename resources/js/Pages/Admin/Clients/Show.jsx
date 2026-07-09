@@ -152,7 +152,7 @@ export default function Show({ client, transactions }) {
                                 {/* QR Code */}
                                 <div className="absolute top-5 right-5 flex flex-col items-center">
                                     <div className="p-1 border-[1.5px] rounded-[0.4rem] bg-white" style={{ borderColor: teal }}>
-                                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${import.meta.env.VITE_PORTAL_URL || window.location.origin}/c/${card.qr_token}&color=000000`} alt="QR Code" className="w-[70px] h-[70px]" />
+                                        <img src={`https://api.qrserver.com/v1/create-qr-code/?size=70x70&data=${window.location.origin}/c/${card.qr_token}&color=000000`} alt="QR Code" className="w-[70px] h-[70px]" />
                                     </div>
                                     <div className="text-center mt-1.5 w-[85px]">
                                         <p className="text-[6.5px] font-black tracking-widest leading-[1.3]" style={{ color: teal }}>SCANNEZ &<br/>DÉCOUVREZ<br/>VOS POINTS !</p>
@@ -281,7 +281,7 @@ export default function Show({ client, transactions }) {
                                         <p className="text-[7px] text-slate-600 mb-3 font-semibold tracking-wide">Scannez le QR Code ou rendez-vous sur</p>
                                         <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-white text-[8px] font-bold shadow-md w-max" style={{ backgroundColor: teal }}>
                                             <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9"></path></svg>
-                                            {import.meta.env.VITE_PORTAL_URL ? import.meta.env.VITE_PORTAL_URL.replace(/^https?:\/\//, '') : window.location.host}
+                                            {window.location.host}
                                         </div>
                                     </div>
 

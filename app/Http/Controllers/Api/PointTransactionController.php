@@ -22,6 +22,7 @@ class PointTransactionController extends Controller
 
     /**
      * Add points to a client.
+     * composer install --no-dev --optimize-autoloader
      */
     public function add(Request $request)
     {
