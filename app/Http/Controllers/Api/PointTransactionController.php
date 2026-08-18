@@ -117,9 +117,16 @@ class PointTransactionController extends Controller
         ]);
 
         try {
-            // Find Loyalty Card by QR Token or Card Number
-            $card = LoyaltyCard::where('qr_token', $validated['qr_token'])
-                ->orWhere('card_number', $validated['qr_token'])
+            // Find Loyalty Card by QR Token or Card Number (handling spaces & formatting)
+            $token = $validated['qr_token'];
+            $cleanToken = str_replace([' ', '-', '_'], '', $token);
+
+            $card = LoyaltyCard::where('qr_token', $token)
+                ->orWhere('card_number', $token)
+                ->orWhere('qr_token', $cleanToken)
+                ->orWhere('card_number', $cleanToken)
+                ->orWhereRaw("REPLACE(card_number, ' ', '') = ?", [$cleanToken])
+                ->orWhereRaw("REPLACE(qr_token, ' ', '') = ?", [$cleanToken])
                 ->first();
 
             if (!$card) {

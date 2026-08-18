@@ -2,12 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Client;
 use App\Models\Level;
-use App\Models\LoyaltyCard;
 use App\Models\Reward;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class DemoFideliteSeeder extends Seeder
 {
@@ -82,30 +79,6 @@ class DemoFideliteSeeder extends Seeder
                     ]
                 );
             }
-        }
-
-        // 2. Créer ou mettre à jour le client de démonstration
-        $starterLevel = Level::where('points_required', 0)->first();
-        
-        $client = Client::updateOrCreate(
-            ['email' => 'client@test.com'],
-            [
-                'name' => 'Jean Dupont',
-                'phone' => '0600000000',
-                'total_points' => 35,
-                'current_level_id' => $starterLevel ? $starterLevel->id : null
-            ]
-        );
-
-        // 3. Créer ou mettre à jour la carte de fidélité
-        if ($client) {
-            LoyaltyCard::updateOrCreate(
-                ['client_id' => $client->id],
-                [
-                    'card_number' => 'SF-' . strtoupper(Str::random(8)),
-                    'qr_token' => Str::random(32)
-                ]
-            );
         }
     }
 }
