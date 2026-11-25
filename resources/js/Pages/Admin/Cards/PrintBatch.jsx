@@ -1,10 +1,11 @@
 import { Head } from '@inertiajs/react';
 
 export default function PrintBatch({ cards }) {
-    // Exact Colors from the Mockup
-    const teal = '#0b838e';
+    // Exact Colors from the Glace Royale Logo
+    const logoBlue = '#4dd1fb';
+    const teal = '#0284c7';
     const orange = '#eb8b22';
-    const lightTeal = '#e6f2f3';
+    const lightTeal = '#e0f6fe';
 
     // Scaling to fit 89.6mm x 58mm (including bleed)
     // 58mm is ~219px. 348px * 0.63 = 219px.
@@ -96,7 +97,7 @@ export default function PrintBatch({ cards }) {
                                             </pattern>
                                         </defs>
                                         
-                                        <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill={teal} />
+                                        <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill={logoBlue} />
                                         <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill="url(#fidelPatternRecto)" />
                                         <path d="M388,0 C268,120 248,220 298,348" fill="none" stroke={orange} strokeWidth="3" />
                                         
@@ -188,7 +189,7 @@ export default function PrintBatch({ cards }) {
                                         </defs>
 
                                         <path d="M0,0 L290,0 C210,120 210,228 290,348 L0,348 Z" fill={orange} />
-                                        <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill={teal} />
+                                        <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill={logoBlue} />
                                         <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill="url(#fidelPatternVerso)" />
                                         
                                         <g transform="translate(30, 315) scale(1.1)" opacity="0.95">
@@ -206,7 +207,7 @@ export default function PrintBatch({ cards }) {
                                         <p className="text-[8px] leading-[1.5] font-bold tracking-wide mt-auto">
                                             Cette carte est personnelle,<br/>
                                             non cessible et reste la propriété<br/>
-                                            de Ci Gusta! Reggio Emilia.
+                                            de Glace Royale.
                                         </p>
                                     </div>
 

@@ -6,10 +6,11 @@ export default function Show({ client, transactions }) {
     const card = client.loyalty_card;
     const [showHistory, setShowHistory] = useState(false);
 
-    // Exact Colors from the Mockup
-    const teal = '#0b838e';
+    // Exact Colors from the Glace Royale Logo
+    const logoBlue = '#4dd1fb';
+    const teal = '#0284c7';
     const orange = '#eb8b22';
-    const lightTeal = '#e6f2f3';
+    const lightTeal = '#e0f6fe';
 
     return (
         <AuthenticatedLayout
@@ -92,7 +93,7 @@ export default function Show({ client, transactions }) {
                                 </defs>
                                 
                                 {/* Teal Area */}
-                                <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill={teal} />
+                                <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill={logoBlue} />
                                 <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill="url(#fidelPattern)" />
                                 
                                 {/* Orange Line */}
@@ -192,7 +193,7 @@ export default function Show({ client, transactions }) {
                                 {/* Orange band (follows teal curve closely all the way down) */}
                                 <path d="M0,0 L290,0 C210,120 210,228 290,348 L0,348 Z" fill={orange} />
                                 {/* Teal Area (Concave curve pushing left) */}
-                                <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill={teal} />
+                                <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill={logoBlue} />
                                 {/* Watermark matched to teal */}
                                 <path d="M0,0 L260,0 C180,120 180,228 260,348 L0,348 Z" fill="url(#fidelPattern)" />
                                 
@@ -216,7 +217,7 @@ export default function Show({ client, transactions }) {
                                 <p className="text-[8px] leading-[1.5] font-bold tracking-wide mt-auto">
                                     Cette carte est personnelle,<br/>
                                     non acessible et reste la propriété<br/>
-                                    de Ci Gusta! Reggio Emilia.
+                                    de Glace Royale.
                                 </p>
                             </div>
 

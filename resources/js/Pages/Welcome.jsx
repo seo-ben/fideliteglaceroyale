@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Head, useForm } from '@inertiajs/react';
 
 export default function Welcome() {
-    const teal = '#0b838e';
+    const logoBlue = '#4dd1fb';
+    const teal = '#0284c7';
     const orange = '#eb8b22';
 
     const { data, setData, post, processing, errors } = useForm({
@@ -81,7 +82,7 @@ export default function Welcome() {
                             </pattern>
                         </defs>
                         
-                        <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill={teal} />
+                        <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill={logoBlue} />
                         <path d="M0,0 L370,0 C250,120 230,220 280,348 L0,348 Z" fill="url(#fidelPatternRecto)" />
                         <path d="M388,0 C268,120 248,220 298,348" fill="none" stroke={orange} strokeWidth="3" />
                         
@@ -177,7 +178,7 @@ export default function Welcome() {
             </form>
             
             <div className="mt-12 text-slate-400 text-xs text-center max-w-sm font-medium">
-                © {new Date().getFullYear()} Ci Gusta! Reggio Emilia. <br/>
+                © {new Date().getFullYear()} Glace Royale. <br/>
                 Votre fidélité, notre plus belle récompense.
             </div>
         </div>
