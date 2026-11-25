@@ -8,7 +8,7 @@ use App\Models\Level;
 use App\Models\Reward;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 class DatabaseSeeder extends Seeder
 {
@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Désactiver les contraintes de clés étrangères pour pouvoir vider les tables
-        DB::statement('PRAGMA foreign_keys = OFF');
+        Schema::disableForeignKeyConstraints();
 
         // Vider SEULEMENT les tables de règles et récompenses
         Reward::truncate();
@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         PointRule::truncate();
 
         // Réactiver les contraintes
-        DB::statement('PRAGMA foreign_keys = ON');
+        Schema::enableForeignKeyConstraints();
 
         // Créer ou mettre à jour l'administrateur
         User::updateOrCreate(
