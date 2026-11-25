@@ -30,12 +30,18 @@ class DatabaseSeeder extends Seeder
         // Réactiver les contraintes
         Schema::enableForeignKeyConstraints();
 
-        // Créer ou mettre à jour l'administrateur
+        // Supprimer l'ancien compte par défaut s'il existe
+        User::where('email', 'admin@smartflow.com')->delete();
+
+        // Créer ou mettre à jour l'administrateur Glace Royale
+        $adminEmail = env('ADMIN_EMAIL', 'admin@glaceroyalpos.net');
+        $adminPassword = env('ADMIN_PASSWORD', 'GlaceRoyale@2026!');
+
         User::updateOrCreate(
-            ['email' => 'admin@smartflow.com'],
+            ['email' => $adminEmail],
             [
-                'name' => 'Administrateur',
-                'password' => bcrypt('password123'),
+                'name' => 'Administrateur Glace Royale',
+                'password' => bcrypt($adminPassword),
                 'is_admin' => true,
             ]
         );
