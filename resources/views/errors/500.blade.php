@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Erreur Interne | {{ config('app.name', 'Fidélité CIGUSTA') }}</title>
+    <title>Erreur Interne | {{ config('app.name', 'Fidélité Glace Royale') }}</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">

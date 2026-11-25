@@ -21,7 +21,7 @@ export default function AuthenticatedLayout({ header, children }) {
                     {sidebarOpen && (
                         <Link href="/" className="flex items-center gap-2 overflow-hidden">
                             <div className="w-8 h-8 rounded-xl bg-gradient-to-br from-red-500 to-orange-400 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-orange-500/30">FC</div>
-                            <span className="text-xl font-black tracking-tight text-slate-900">Fidélité<span className="text-orange-500">CIGUSTA</span></span>
+                            <span className="text-xl font-black tracking-tight text-slate-900">Fidélité<span className="text-orange-500"> Glace Royale</span></span>
                         </Link>
                     )}
                     <button onClick={() => setSidebarOpen(!sidebarOpen)} className="p-2 rounded-lg hover:bg-slate-100 text-slate-500 transition-colors">
