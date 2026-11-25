@@ -35,7 +35,7 @@ class DatabaseSeeder extends Seeder
 
         // Créer ou mettre à jour l'administrateur Glace Royale
         $adminEmail = env('ADMIN_EMAIL', 'admin@glaceroyalpos.net');
-        $adminPassword = env('ADMIN_PASSWORD', 'GlaceRoyale@2026!');
+        $adminPassword = env('ADMIN_PASSWORD') ?: \Illuminate\Support\Str::password(16);
 
         User::updateOrCreate(
             ['email' => $adminEmail],
